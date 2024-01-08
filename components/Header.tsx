@@ -9,8 +9,10 @@ import {
   PaperAirplaneIcon,
   PhoneIcon,
   PlayCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { Popover, Transition } from "@headlessui/react";
+import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
+import { cn } from "@/lib/utils";
 
 interface IProduct {
   name: string;
@@ -45,6 +47,11 @@ const callsToAction = [
   { name: "Contact Support", href: "#", icon: PhoneIcon },
 ];
 
+let mobileMenuOpen: boolean = false;
+const setMobileMenuOpen = (active: boolean) => {
+  mobileMenuOpen = active;
+};
+
 function Header() {
   return (
     <header className="bg-[#013B94]">
@@ -62,13 +69,15 @@ function Header() {
         <div className="flex lg:hidden">
           <button
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
-            onClick={() => {}}>
+            onClick={() => {}}
+          >
             <span className="sr-only">Open main menu</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-6 h-6">
+              className="w-6 h-6"
+            >
               <path
                 fillRule="evenodd"
                 d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
@@ -90,13 +99,15 @@ function Header() {
               enterTo="opacity-100 translate-y-0"
               leave="transition ease-in duration-150"
               leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1">
+              leaveTo="opacity-0 translate-y-1"
+            >
               <Popover.Panel className="absolute bg-white -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl shadow-lg ring-1 ring-gray-900/5">
                 <div className="p-4">
                   {products.map((item: IProduct) => (
                     <div
                       key={item.name}
-                      className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
+                      className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
+                    >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-gray-200">
                         <item.icon
                           className="h-6 w-6 text-[#013B94] group-hover:text-blue-600"
@@ -106,7 +117,8 @@ function Header() {
                       <div className="flex-auto">
                         <a
                           href={item.href}
-                          className="block font-semibold text-[#013B94]">
+                          className="block font-semibold text-[#013B94]"
+                        >
                           {item.name}
                           <span className="absolute inset-0" />
                         </a>
@@ -122,7 +134,8 @@ function Header() {
                     <a
                       href={item.href}
                       key={item.name}
-                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-[#013B94] hover:bg-gray-100">
+                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-[#013B94] hover:bg-gray-100"
+                    >
                       <item.icon className="h-5 w-5 flex-none text-[#013B94]" />
                       {item.name}
                     </a>
@@ -150,6 +163,112 @@ function Header() {
           </a>
         </div>
       </nav>
+      <Dialog
+        as="div"
+        className="lg:hidden"
+        open={true}
+        onClose={setMobileMenuOpen}
+      >
+        <div className="fixed inset-0 z-10" />
+        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-[#013B94] px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between">
+            <a href="" className="m-1.5 p-1.5">
+              <span className="sr-only">Booking.com</span>
+              {/*Todo add Image*/}
+            </a>
+            <button
+              type="button"
+              className="-m-1.5 rounded-md p-2.5 text-white"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="sr-only">Close menu</span>
+              <XMarkIcon className="-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+                <Disclosure as={"div"} className={"-mx-3"}>
+                  {({ open }) => (
+                    <>
+                      <Disclosure.Button
+                        className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5
+                      text-base font-semibold leading-7 text-white hover:bg-blue-800"
+                      >
+                        Stays
+                        <ChevronDownIcon
+                          className={cn(
+                            open ? "rotate-180" : "",
+                            "h-5 w-5 flex-none"
+                          )}
+                          aria-hidden={true}
+                        />
+                      </Disclosure.Button>
+                      <Disclosure.Panel className={"mt-2 space-y-2"}>
+                        {[...products, ...callsToAction].map((item) => (
+                          <Disclosure.Button
+                            key={item.name}
+                            as={"a"}
+                            href={item.href}
+                            className={
+                              "block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-white hover:bg-blue-800"
+                            }
+                          >
+                            {item.name}
+                          </Disclosure.Button>
+                        ))}
+                      </Disclosure.Panel>
+                    </>
+                  )}
+                </Disclosure>
+                <a
+                  href="#"
+                  className={
+                    "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-blue-800"
+                  }
+                >
+                  Flights
+                </a>
+                <a
+                  href="#"
+                  className={
+                    "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-blue-800"
+                  }
+                >
+                  Car Rentals
+                </a>
+                <a
+                  href="#"
+                  className={
+                    "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-blue-800"
+                  }
+                >
+                  Attractions
+                </a>
+                <a
+                  href="#"
+                  className={
+                    "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-blue-800"
+                  }
+                >
+                  Flights + Hotel
+                </a>
+                <div className="py-6">
+                  <a
+                    href="#"
+                    className={
+                      "-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-blue-800"
+                    }
+                  >
+                    Login
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
     </header>
   );
 }
